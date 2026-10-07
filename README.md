@@ -1,6 +1,6 @@
 # Testing de SIMAI Mesh — Trabajo final de TSSE
 
-**Versión:** A, 2026-10-07. **Estado:** planificación y diseño de casos; ejecución con Ceedling y medición de cobertura pendientes.
+**Versión:** A. **Estado:** planificación y diseño de casos; ejecución con Ceedling y medición de cobertura pendientes.
 
 ## Propósito y relación con la consigna
 
@@ -52,7 +52,5 @@ git -C testing pull --ff-only origin main
 git add testing
 git commit -m "Update testing submodule"
 ```
-
-La documentación enlaza al repositorio del firmware en el commit de referencia `ad353cea78ce1149c8ea251aea8769efd5cf616c`. Ese identificador fija la referencia documental; no acredita ejecución de tests sobre ese commit. Algunos documentos revisados tienen cambios locales aún no publicados en el repositorio principal. Los enlaces del firmware requieren permiso de lectura si SIMAI Mesh es privado.
 
 La futura suite Ceedling deberá recibir una ruta explícita al clon del firmware (por ejemplo `SIMAI_MESH_ROOT`) y registrar el commit y los cambios locales ensayados. Actualmente esa configuración no está implementada y no se incluye una copia del firmware en este repositorio.
