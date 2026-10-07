@@ -14,13 +14,13 @@ SIMAI Mesh es un prototipo de red de sensores LoRa sobre Heltec WiFi LoRa 32 V3 
 
 | Base | Uso |
 |---|---|
-| [API de red](https://github.com/SIMAI-AGRO/simai-mesh/blob/develop/firmware/components/network_layer/include/network_layer.h) | Tipos, errores, configuración y contadores públicos. |
-| [Implementación de red](https://github.com/SIMAI-AGRO/simai-mesh/blob/develop/firmware/components/network_layer/network_layer.c) | Construcción del flujo CFT y contraste con el contrato. |
-| [Descripción de red](https://github.com/SIMAI-AGRO/simai-mesh/blob/develop/firmware/docs/protocol/network_layer.md) | Selección de rutas, TTL y escenario de tres nodos. |
-| [Formato de trama](https://github.com/SIMAI-AGRO/simai-mesh/blob/develop/firmware/docs/protocol/frame_format.md) | Campos y serialización para integración. |
-| [Tests host existentes](https://github.com/SIMAI-AGRO/simai-mesh/blob/develop/firmware/test/host/test_network_layer/test_network_layer.c) | Escenarios reutilizables; no constituyen evidencia Ceedling. |
-| [Resultados previos](https://github.com/SIMAI-AGRO/simai-mesh/blob/develop/firmware/docs/tests/results_summary.md) | Contexto de ensayos físicos anteriores. |
-| [Limitaciones](https://github.com/SIMAI-AGRO/simai-mesh/blob/develop/firmware/docs/known_limitations.md) | Límites de las conclusiones. |
+| API de red (`firmware/components/network_layer/include/network_layer.h`) | Tipos, errores, configuración y contadores públicos. |
+| Implementación de red (`firmware/components/network_layer/network_layer.c`) | Construcción del flujo CFT y contraste con el contrato. |
+| Descripción de red (`firmware/docs/protocol/network_layer.md`) | Selección de rutas, TTL y escenario de tres nodos. |
+| Formato de trama (`firmware/docs/protocol/frame_format.md`) | Campos y serialización para integración. |
+| Tests host existentes (`firmware/test/host/test_network_layer/test_network_layer.c`) | Escenarios reutilizables; no constituyen evidencia Ceedling. |
+| Resultados previos (`firmware/docs/tests/results_summary.md`) | Contexto de ensayos físicos anteriores. |
+| Limitaciones (`firmware/docs/known_limitations.md`) | Límites de las conclusiones. |
 
 Los resultados esperados se fijan en los requerimientos de prueba antes de ejecutar. Si documentación, intención funcional y código difieren, se registra la diferencia y se decide el contrato; no se cambia el resultado esperado solamente para lograr un PASS.
 

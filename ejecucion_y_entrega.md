@@ -72,7 +72,7 @@ La cantidad de diapositivas y duración se ajustan al tiempo que indique la cát
 
 ## Referencias adicionales
 
-- [Script de pruebas host actual](https://github.com/SIMAI-AGRO/simai-mesh/blob/develop/firmware/scripts/test_network_layer_host.sh).
-- [Plan de sistema multi-salto](https://github.com/SIMAI-AGRO/simai-mesh/blob/develop/firmware/docs/tests/multihop_test_plan.md).
-- [Plan de cambio de conectividad](https://github.com/SIMAI-AGRO/simai-mesh/blob/develop/firmware/docs/tests/connectivity_change_test_plan.md).
-- [Resumen histórico de resultados](https://github.com/SIMAI-AGRO/simai-mesh/blob/develop/firmware/docs/tests/results_summary.md).
+- Script de pruebas host actual (`firmware/scripts/test_network_layer_host.sh`).
+- Plan de sistema multi-salto (`firmware/docs/tests/multihop_test_plan.md`).
+- Plan de cambio de conectividad (`firmware/docs/tests/connectivity_change_test_plan.md`).
+- Resumen histórico de resultados (`firmware/docs/tests/results_summary.md`).
