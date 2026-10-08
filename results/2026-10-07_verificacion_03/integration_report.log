@@ -1,0 +1,4 @@
+Command: gcovr -r /simai --filter /simai/firmware/components/\(network_layer\|mesh_frame\)/.\*\\.c --json results/2026-10-07_verificacion_03/integration_coverage.json --json-summary results/2026-10-07_verificacion_03/integration_summary.json --html results/2026-10-07_verificacion_03/integration_coverage.html --print-summary build/integration/gcov
+lines: 65.7% (165 out of 251)
+functions: 81.0% (17 out of 21)
+branches: 41.1% (69 out of 168)

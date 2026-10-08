@@ -1,0 +1,64 @@
+Command: ceedling --project integration.yml gcov:all
+🚧 Loaded project configuration from command line argument.
+ > Using: /testing/integration.yml
+ > Working directory: /testing
+
+Ceedling set up completed in 502 milliseconds
+
+👟 Preparing Build Paths...
+
+👟 Collecting Test Context
+--------------------------
+Parsing test_multihop.c for build directive macros, #includes, and test case names...
+
+👟 Ingesting Test Configurations
+--------------------------------
+Collecting search paths, flags, and defines test_multihop.c...
+
+👟 Determining Files to be Generated...
+
+👟 Test Runners
+---------------
+Generating runner for test_multihop.c...
+
+👟 Determining Artifacts to Be Built...
+
+👟 Building Objects
+-------------------
+Compiling test_multihop.c...
+Compiling network_layer.c with coverage...
+Compiling mesh_frame.c with coverage...
+Compiling test_multihop::test_multihop_runner.c...
+Compiling test_multihop::unity.c...
+
+👟 Building Test Executables
+----------------------------
+Linking test_multihop.out...
+
+👟 Executing
+------------
+Running test_multihop.out...
+test_multihop.c:35:test_IS01_sensor_bridge_concentrator_preserves_message_over_wire_format:PASS
+
+-----------------------
+1 Tests 0 Failures 0 Ignored 
+OK
+
+---------------------------
+GCOV: CODE COVERAGE SUMMARY
+---------------------------
+
+test_multihop
+-------------
+network_layer.c | Lines executed:63.75% of 160
+network_layer.c | Branches executed:72.13% of 122
+network_layer.c | Taken at least once:39.34% of 122
+network_layer.c | Calls executed:76.92% of 13
+
+mesh_frame.c | Lines executed:69.23% of 91
+mesh_frame.c | Branches executed:78.26% of 46
+mesh_frame.c | Taken at least once:45.65% of 46
+mesh_frame.c | Calls executed:100.00% of 6
+
+
+Ceedling operations completed in 5.55 seconds

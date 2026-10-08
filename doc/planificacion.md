@@ -94,7 +94,7 @@ Estimación del esfuerzo de diseño y ejecución del alcance de software: no son
 ## 5. Recursos y preparación
 
 - Responsable: autor del TP/proyecto.
-- PC y entorno Docker del repositorio como entorno previsto; sin placas para la suite comprometida.
+- PC y Docker del módulo testing; imagen oficial fijada por digest y sin placas para la suite comprometida.
 - Compilador C del host, Ceedling/Unity y herramientas gcov/gcovr compatibles entre sí; registrar las versiones efectivamente utilizadas.
 - Código productivo existente y cabecera host `firmware/test/host/include/esp_err.h`, sin arrastrar ESP-IDF ni FreeRTOS para el componente puro.
 - Análisis estático del componente como revisión de entrada recomendada por el material MTP: registrar hallazgos y correcciones o excepciones justificadas. No confundirlo con ejecución dinámica.
@@ -106,7 +106,7 @@ Estimación del esfuerzo de diseño y ejecución del alcance de software: no son
 3. Completar el diagrama y la tabla CFT.
 4. Implementar los casos en Ceedling, reutilizando escenarios existentes cuando corresponda.
 5. Ejecutar suite y cobertura; corregir defectos o informar discrepancias.
-6. Ejecutar integración opcional si se incorpora al alcance y registrar evidencia.
+6. Ejecutar integración de software IS-01 y registrar evidencia.
 7. Preparar presentación, capturas/video y conclusiones limitadas a lo ensayado.
 
 **Entrada:** contrato acordado, código identificable, entorno reproducible y fixtures independientes entre tests.

@@ -1,0 +1,27 @@
+{
+  "timestamp_utc": "2026-10-08T00:05:11.125168+00:00",
+  "timestamp_local": "2026-10-07T21:05:11.125588-03:00",
+  "environment": "Linux x86_64 in Docker; no hardware",
+  "image_reference": "throwtheswitch/madsciencelab-plugins@sha256:90f393775dbe7e77b089292903a0e046e183caa8ccee9a83a759fe7cb6ea146a",
+  "firmware_commit": "c66dd10547b2991a00f0b45c3130e9e2690ff1ba",
+  "firmware_branch": "testing",
+  "firmware_worktree_status": "",
+  "testing_base_commit": "5b3b3cb1672831d044076f24c6a879aafb2e0662",
+  "testing_worktree_status": "",
+  "source_sha256": {
+    "firmware/components/network_layer/network_layer.c": "f00f49177a374410b620b62bd28608faa9bd3eee10c069a2db9ab48c45e26694",
+    "firmware/components/network_layer/include/network_layer.h": "bf43772bd02479e60fe85b2fc8a4e92a3ebaefeb0641875563bdc703a8f12a54",
+    "firmware/components/mesh_frame/mesh_frame.c": "b9734190419fa6429c31e9c6d5d8b1cb991b8f02a3892499a9674bd0b96516b6",
+    "firmware/components/mesh_frame/include/mesh_frame.h": "b80fdb2bb285d88deceb12658e4f290b8c6346aa90e5442254388059e954d300",
+    "firmware/test/host/include/esp_err.h": "fc9c562b7d119ce816cfc9a9e3245a7269568c18b580f6f43e7d7a685117f097",
+    "firmware/test/host/test_network_layer/test_network_layer.c": "c8d9f42e5a051307bf5df3bd38e10f916062c59b1dee27b214e0251ea20a6ffb"
+  },
+  "test_sha256": {
+    "test/integration/test_multihop.c": "f9936f6fb671ed21993aac0c85edbdedb3b85c6f302a7dcc8eee693d17095aa6",
+    "test/unit/test_network_layer.c": "0d65d9550928556f557f9394b214aeb637a9d2b6bcbb66c4e1ff92de28be6fb3"
+  },
+  "config_sha256": {
+    "project.yml": "337cae78d1044db5e22a4aaa8681b820ec5aaf9c5cda07d74e5874f589ba1f1d",
+    "integration.yml": "ab80992ca3d8b06d951ae365685de1748e6960beccf46aacaad0a1f2c9a45559"
+  }
+}
