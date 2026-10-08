@@ -1,78 +1,86 @@
 # Ejecución y entrega del TP
 
-## Estado actual
+## Estado y configuración
 
-La documentación de planificación y casos está preparada. Los tests de red existentes usan `assert` y un script de compilación C; no se presenta esa suite como si ya fuera Ceedling. No se ejecutaron tests ni se midió cobertura durante la creación de estos documentos.
+Implementados y ejecutados: nueve casos unitarios CP-01 a CP-09, integración IS-01, análisis estático y regresión host de red. Se mantiene el firmware original sin modificaciones. La presentación se prepara en Markdown; resta al autor realizar la defensa oral y ajustar su duración.
 
-## Automatización prevista
+- [project.yml](../project.yml): suite unitaria; fuente productiva `network_layer.c`.
+- [integration.yml](../integration.yml): suite separada de red más formato `mesh_frame.c`.
+- [Test unitario](../test/unit/test_network_layer.c) y [test de integración](../test/integration/test_multihop.c).
+- [Runner Windows](../scripts/run.ps1), [runner Linux](../scripts/run.sh) y [secuencia del contenedor](../scripts/run_all.sh).
 
-1. Crear una configuración Ceedling aislada para TSSE, conservando los scripts host existentes.
-2. Compilar el archivo productivo `firmware/components/network_layer/network_layer.c` directamente; evitar una copia que pueda divergir.
-3. Incluir las cabeceras de `network_layer`, `mesh_frame` y la cabecera host `esp_err.h`. La suite unitaria de preparación del reenvío no necesita compilar la radio ni ESP-IDF; las operaciones de red utilizadas en el fixture pertenecen al mismo componente.
-4. Crear funciones `test_*` con Unity para CP-01 a CP-09, fixture limpio en cada test y verificaciones de errores, campos y estadísticas.
-5. Si se incluye IS-01, agregar `mesh_frame.c` a una ejecución de integración diferenciada. No introducir mocks sin una dependencia externa que deba aislarse.
-6. Ejecutar la suite mediante `ceedling test:all` desde su carpeta de configuración, una vez creada y validada. Este comando es el flujo previsto, no evidencia de una configuración disponible actualmente.
-7. Habilitar instrumentación y reporte de cobertura según la versión instalada de Ceedling/gcov/gcovr. Registrar el comando real validado y sus versiones; no fijar una tarea de cobertura antes de disponer de esa configuración.
+El componente de red es puro y utiliza tipos de `mesh_frame.h` y la cabecera host `esp_err.h`; no necesita la radio, ESP-IDF ni mocks externos para el flujo elegido. Unity comprueba resultados y Ceedling genera runners/build. No se desarrolló el componente nuevamente con TDD.
 
-El entorno previsto sigue el flujo Docker del proyecto. La instalación/configuración concreta de Ceedling queda pendiente. No se requiere desarrollar el componente nuevamente con TDD.
+## Reproducir
 
-## Qué medir y guardar
+Abrir Docker Desktop con motor Linux activo. Desde la raíz de este repositorio, con Git en PATH:
 
-- Resultado PASS/FAIL de cada caso, con su identificador CP.
-- Advertencias o errores de compilación y discrepancias funcionales.
-- Cobertura de líneas y ramas de `network_layer.c`, con numerador/denominador o porcentaje y herramienta utilizada.
-- Líneas/ramas relevantes sin recorrer y explicación de los límites del alcance.
-- Commit ensayado, cambios locales incluidos, fecha, entorno, versiones y comandos.
-- Capturas o video de la corrida y reporte legible para la presentación.
+```powershell
+./scripts/run.ps1
+# Para un clon independiente:
+./scripts/run.ps1 -SimaiMeshRoot 'C:/ruta/al/simai-mesh'
+```
 
-No confundir los siete caminos CFT del flujo seleccionado con el porcentaje de cobertura de todo el archivo, ni cobertura de código con tasa de entrega de paquetes.
+En Linux:
 
-## Registro de ejecución para completar
+```bash
+SIMAI_MESH_ROOT=/ruta/al/simai-mesh bash scripts/run.sh
+```
 
-| Dato | Valor |
+Docker descarga la imagen si no está disponible. Se fija el digest `sha256:90f393775dbe7e77b089292903a0e046e183caa8ccee9a83a759fe7cb6ea146a` de la imagen oficial `throwtheswitch/madsciencelab-plugins:1.0.0`. Evita depender de una etiqueta móvil.
+
+El runner valida la ruta y crea `results/<fecha_hora>/`; rechaza identificadores ya existentes para conservar evidencias. Monta el firmware como solo lectura, ejecuta con `set -euo pipefail` y devuelve error si alguna etapa falla. Los builds regenerables quedan ignorados por Git en `build/`.
+
+Dentro del contenedor la secuencia es:
+
+1. Registrar versiones, Git del host y hashes SHA-256.
+2. Compilar red y formato con GCC `-fanalyzer -Wall -Wextra -Werror`.
+3. Ejecutar `ceedling clobber test:all` para la suite unitaria.
+4. Ejecutar `ceedling gcov:all` y generar reportes gcovr.
+5. Ejecutar `ceedling --project integration.yml clobber test:all`.
+6. Ejecutar `ceedling --project integration.yml gcov:all` y reportar su cobertura aparte.
+7. Compilar/ejecutar la suite host de red preexistente.
+8. Validar 9 PASS unitarios, 1 PASS de integración y cobertura completa de líneas/ramas del flujo seleccionado; generar `resumen.md`.
+
+No se combinan los porcentajes unitarios y de integración. La suite instrumentada vuelve a ejecutar los mismos casos; no son casos adicionales.
+
+## Resultado registrado
+
+| Actividad | Resultado |
 |---|---|
-| Fecha de ejecución | Pendiente |
-| Commit y modificaciones locales | Pendiente |
-| Entorno y versiones | Pendiente |
-| Comando de ejecución | Pendiente de configuración |
-| CP-01 a CP-09 | No ejecutados con Ceedling |
-| IS-01 | Opcional; ejecución nueva pendiente |
-| Cobertura de líneas/ramas | No medida |
-| Defectos y excepciones | Pendiente de revisión y ejecución |
-| Evidencia (capturas/video/reporte) | Pendiente |
+| CP-01 a CP-09 | 9 PASS, 0 FAIL, 0 IGNORE |
+| IS-01 | 1 PASS, 0 FAIL, 0 IGNORE |
+| Regresión host anterior de red (10 funciones de test) | PASS |
+| Revisión estática de red y formato | Sin diagnósticos con GCC -fanalyzer y advertencias como errores |
+| prepare_forward, solo suite unitaria | 25/25 líneas; 12/12 ramas tomadas (100 %) |
+| network_layer.c, solo suite unitaria | 84/160 líneas (52,5 %); 44/122 ramas (36,1 %) |
+| network_layer.c, solo integración | 102/160 líneas (63,7 %); 48/122 ramas (39,3 %) |
+| mesh_frame.c, solo integración | 63/91 líneas (69,2 %); 21/46 ramas (45,7 %) |
 
-Crear un registro nuevo por corrida relevante; conservar resultados fallidos y su resolución. No reemplazar «pendiente» por PASS a partir de un resultado de otra versión o entorno.
+Entorno: Ceedling 1.0.0, Unity 2.6.1, Ruby 3.1.2, GCC/gcov 12.2.0, gcovr 5.2, Python 3.11.2. La evidencia identifica la versión exacta del firmware y el estado de la copia de trabajo ensayada.
 
-## Guion sugerido de presentación
+Ver [resumen y evidencia](../results/2026-10-07_verificacion_03/resumen.md), [reporte unitario HTML](../results/2026-10-07_verificacion_03/unit_coverage.html) y [reporte de integración HTML](../results/2026-10-07_verificacion_03/integration_coverage.html). GitHub puede mostrar el HTML como archivo; descargarlo y abrirlo localmente para visualizarlo.
 
-1. Problema real: red LoRa y camino sensor-puente-concentrador; datos simulados y límites actuales.
-2. Alcance de TSSE y requerimientos RT.
-3. Planificación: tablas A, B y C, prioridades y exclusiones justificadas.
-4. CFT: diagrama y profundidad elegida.
-5. Caminos y casos físicos: mostrar entradas y resultados, incluidos TTL 0/1.
-6. Código y estructura de los tests en Ceedling.
-7. Corrida y cobertura; qué se comprobó y qué falta cubrir.
-8. Conclusiones y evidencia previa de banco como complemento opcional, con fecha y versión.
+Los HTML son resúmenes sin código fuente; los JSON registran nombres, números de línea y contadores. La suite pública requiere acceso al firmware para compilar. Los resultados no certifican radio real, SPI, FreeRTOS, sensores, distancia, consumo ni estabilidad prolongada.
 
-La cantidad de diapositivas y duración se ajustan al tiempo que indique la cátedra. El entregable es la presentación; estos documentos son su base de trabajo.
+## Trazabilidad y problemas de entorno resueltos
+
+El primer intento del runner falló antes de ejecutar tests por la ruta `.git` del submódulo dentro del contenedor. Se corrigió leyendo la identidad de Git en el host. Una corrida intermedia pasó los tests, pero Git Linux informaba cambios de fin de línea CRLF como modificaciones del firmware. El registro definitivo toma estado y commit desde Git del host y conserva hashes de los bytes efectivamente compilados. Las evidencias intermedias se conservaron localmente en `work/evidence_attempts`, sin presentarlas como la corrida final.
+
+Las primeras pruebas de configuración también permitieron ajustar la sintaxis de flags gcov de Ceedling 1.0.0. No se modificaron los resultados esperados ni el firmware para obtener PASS.
 
 ## Checklist de cierre
 
-- [x] Proyecto real y alcance definidos.
-- [x] Características de calidad ponderadas.
-- [x] Tipos, niveles, responsables y momentos definidos.
-- [x] Distribución de esfuerzo y exclusiones justificadas.
-- [x] Técnica CFT y casos concretos documentados.
-- [ ] Confirmar el contrato de TTL y entrega local con el autor.
-- [ ] Registrar revisión estática y advertencias.
-- [ ] Configurar Ceedling y automatizar CP-01 a CP-09.
-- [ ] Ejecutar y documentar resultados.
-- [ ] Medir y explicar cobertura.
-- [ ] Preparar evidencia y presentación final.
+- [x] Proyecto, alcance y requerimientos de prueba definidos.
+- [x] Master Test Plan con características, prioridades, niveles, esfuerzo y exclusiones.
+- [x] Técnica CFT, siete caminos y nueve casos físicos documentados.
+- [x] Semántica de TTL/entrega local explícita en contrato y verificada; no constituye aprobación externa del protocolo.
+- [x] Revisión estática registrada.
+- [x] Casos implementados y ejecutados con Ceedling.
+- [x] Integración de software y regresión de red ejecutadas.
+- [x] Cobertura medida y límites explicados.
+- [x] Logs, hashes y reportes preparados como evidencia.
+- [x] [Presentación en Markdown](presentacion.md) preparada con resultados reales.
+- [ ] Confirmar duración y fecha con la cátedra y realizar la defensa oral.
 
-## Referencias adicionales
-
-- Script de pruebas host actual (`firmware/scripts/test_network_layer_host.sh`).
-- Plan de sistema multi-salto (`firmware/docs/tests/multihop_test_plan.md`).
-- Plan de cambio de conectividad (`firmware/docs/tests/connectivity_change_test_plan.md`).
-- Resumen histórico de resultados (`firmware/docs/tests/results_summary.md`).
+No se requiere repetir banco o campo para este alcance de la materia.

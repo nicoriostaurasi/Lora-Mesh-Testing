@@ -67,10 +67,18 @@ Cuando se indica ruta presente, cargar mediante `network_layer_upsert_route()` u
 
 Para CP-04 a CP-07 comprobar que la trama no cambió. Para CP-08 y CP-09 verificar explícitamente tipo, origen, destino, identificador, longitud y cada byte de payload. En todos los casos con contexto accesible comprobar los seis contadores, no solo el que debe aumentar. Comparar campos semánticos; no depender de padding de structs mediante una comparación cruda de memoria.
 
-## Integración opcional IS-01
+## Integración de software IS-01 (incluida en la ejecución)
 
 Crear tres contextos locales 1, 2 y 3. Cargar ruta en sensor hacia 3 vía 2 y en puente hacia 3 vía 3. Originar la trama en sensor con TTL 4; serializar/deserializar mediante `mesh_frame`; reenviar en puente; serializar/deserializar nuevamente y llamar a preparación en concentrador para verificar entrega local.
 
 Esperar: TTL 3, hop_count 1, origen 1, destino 3, payload idéntico; `originated=1` en sensor, `forwarded=1` en puente y `delivered_local=1` en concentrador. Un puente intermedio equivale a hop_count 1 en esta implementación, aunque el recorrido use dos enlaces de radio.
 
 Este caso prueba integración de software. No usa radio ni simula propagación, pérdidas RF o latencia física. Mantener su resultado separado de la cobertura de la suite unitaria.
+
+## Implementación y evidencia
+
+Los nueve casos se implementan en [test_network_layer.c](../test/unit/test_network_layer.c). Los nombres `test_CP01_*` a `test_CP09_*` conservan la relación con la tabla, cuyos identificadores son CP-01 a CP-09. Las aserciones comparan campos individuales, payload y los seis contadores; no comparan padding de estructuras.
+
+IS-01 se implementa en [test_multihop.c](../test/integration/test_multihop.c). Compila `network_layer.c` y `mesh_frame.c` reales. Los tres contextos se ejecutan en un proceso; los nodos no son tres dispositivos físicos y no se simula la propagación RF.
+
+La [corrida registrada](../results/2026-10-07_verificacion_03/resumen.md) obtuvo PASS en todos los casos. Las siete acciones finales del diagrama fueron recorridas y la función elegida alcanzó 100 % de líneas y ramas tomadas. La medición de ramas de GCC no equivale a MC/DC.

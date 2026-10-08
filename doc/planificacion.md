@@ -1,4 +1,4 @@
-# Planificación de pruebas
+# Master Test Plan — SIMAI Mesh — Alcance del TP de TSSE
 
 ## 1. Proyecto y alcance
 
@@ -6,7 +6,7 @@ SIMAI Mesh es un prototipo de red de sensores LoRa sobre Heltec WiFi LoRa 32 V3 
 
 **Objetivo del alcance ejecutable:** verificar que la capa de red decide correctamente entre entrega local, reenvío y rechazo; preserva los datos y actualiza campos y contadores según el contrato propuesto.
 
-**Incluido en la ejecución de TSSE:** pruebas unitarias de `network_layer_prepare_forward()` y sus dependencias internas, usando las APIs públicas para inicializar y cargar rutas; cobertura del archivo `network_layer.c`. Como extensión, integración de software con `mesh_frame` para el recorrido de tres nodos.
+**Incluido en la ejecución de TSSE:** pruebas unitarias de `network_layer_prepare_forward()` y sus dependencias internas, usando las APIs públicas para inicializar y cargar rutas; cobertura del archivo `network_layer.c`. También se ejecuta integración de software con `mesh_frame` para el recorrido de tres nodos (IS-01).
 
 **Fuera de la ejecución comprometida:** radio/SPI reales, tareas FreeRTOS, sensores físicos, OLED/LED, alcance RF, consumo, estabilidad de varias horas y recuperación mediante caminos alternativos reales. La selección de rutas se usa como apoyo del reenvío; una caracterización exhaustiva de sus desempates y capacidad de tabla queda para una ampliación.
 
@@ -71,7 +71,7 @@ Se usa el vocabulario de calidad trabajado en el MTP del curso. Rendimiento RF, 
 | Nivel | Funcionalidad | Confiabilidad | Mantenibilidad | Tipo/objetivo | Momento y responsable | Estado para TSSE |
 |---|---|---|---|---|---|---|
 | Unitario en PC | ++ | ++ | + | Pruebas funcionales positivas/negativas y regresión de red | Autor del TP, tras diseñar los casos y ante cambios | Ejecución comprometida con Ceedling. |
-| Integración de software en PC | ++ | + | + | Red + serialización de tramas; preservación de datos | Autor del TP, tras los unitarios | Extensión propuesta; existe un escenario host previo. |
+| Integración de software en PC | ++ | + | + | Red + serialización de tramas; preservación de datos | Autor del TP, tras los unitarios | IS-01 implementada y ejecutada; existe además un escenario host previo. |
 | Integración HW/SW en banco | + | + | — | SPI, radio y firmware reales | Autor del proyecto, después del build del target | Fuera de ejecución TSSE; evidencia histórica complementaria. |
 | Sistema en banco | ++ | + | — | Entrega sensor-puente-concentrador y pérdida de puente | Autor del proyecto, con perfiles y versión registrados | Fuera de ejecución TSSE; hay resultados registrados. |
 | Campo | + | ++ | — | Distancia, obstáculos, interferencia y estabilidad | Autor del proyecto, en una campaña posterior | Diferido; no se demuestra con simulación. |
@@ -85,7 +85,7 @@ Estimación del esfuerzo de diseño y ejecución del alcance de software: no son
 | Subsistema | Esfuerzo | Funcionalidad | Confiabilidad | Mantenibilidad | Técnica/actividad |
 |---|---:|---|---|---|---|
 | `network_layer` | 70 % | ++ | ++ | + | CFT nivel 1 sobre preparación del reenvío y casos de borde. |
-| `mesh_frame` | 20 % | ++ | + | + | Integración opcional pack/unpack del recorrido de tres nodos. |
+| `mesh_frame` | 20 % | ++ | + | + | Integración pack/unpack del recorrido de tres nodos (IS-01 ejecutada). |
 | Fixtures de trama y muestra (`sensor_app` como contexto) | 10 % | + | + | + | Preparar payload determinístico y comprobar conservación. |
 | Total | 100 % | | | | |
 
@@ -120,3 +120,15 @@ Estimación del esfuerzo de diseño y ejecución del alcance de software: no son
 El resumen del repositorio registra para 2026-08-26 y commit `db5fbb0` una prueba multi-salto de 49/50 mensajes, 98 % de entrega y latencia máxima de 795 ms. Registra también pérdida del puente sin alternativa de ruta. Son resultados históricos documentados, no pruebas ejecutadas al crear este módulo ni validación automática de la copia de trabajo actual.
 
 La aceptación física del proyecto usa criterios propios (por ejemplo entrega y latencia). Esos criterios no se trasladan a tests unitarios PC ni a un porcentaje de cobertura. Las rutas de la demostración son estáticas o derivadas de vecinos; no se acredita descubrimiento distribuido completo ni reselección física entre caminos alternativos.
+
+## 8. Ejecución de esta versión del plan
+
+**Versión B — 2026-10-07:** se implementaron CP-01 a CP-09 con Unity/Ceedling y se incorporó IS-01 al alcance ejecutado. Se ensaya la semántica RT-01 a RT-09 documentada; no se redefine el protocolo al ajustar los tests.
+
+El entorno concreto es Docker Linux con una imagen oficial ThrowTheSwitch fijada por digest. Se ejecuta GCC `-fanalyzer` como revisión estática de entrada para `network_layer.c` y `mesh_frame.c`, además de `-Wall -Wextra -Werror`. No es un chequeo MISRA ni una certificación.
+
+Las tres etapas están documentadas y la automatización produjo 9 PASS unitarios y 1 PASS de integración. Se cumple el criterio de salida para el flujo seleccionado: 25/25 líneas y 12/12 ramas tomadas en `prepare_forward`. El criterio de cobertura de esa función es una decisión de este plan, no un umbral impuesto por la cátedra.
+
+La cobertura de todo el archivo con CP-01 a CP-09 es menor: 52,5 % de líneas y 36,1 % de ramas. Quedan fuera del recorrido unitario construcción de mensajes, eliminación de rutas, consulta de rutas, reinicio de contadores y predicado de entrega local. IS-01 recorre algunas de esas APIs, pero se reporta por separado. Tampoco se cubren completamente desempates de rutas, tabla llena ni todas las validaciones de entrada de APIs de apoyo.
+
+El cierre académico incluye la [presentación preparada](presentacion.md) y su exposición dentro del tiempo de la cátedra. Los resultados y sus límites se registran en la [evidencia de ejecución](../results/2026-10-07_verificacion_03/resumen.md).

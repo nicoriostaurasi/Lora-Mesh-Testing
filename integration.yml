@@ -1,0 +1,37 @@
+---
+:project:
+  :use_mocks: FALSE
+  :use_exceptions: FALSE
+  :use_test_preprocessor: :none
+  :use_deep_preprocessor: :none
+  :build_root: build/integration
+  :test_file_prefix: test_
+  :default_tasks:
+    - test:all
+:paths:
+  :test:
+    - test/integration/**
+  :source:
+    - "#{ENV.fetch('SIMAI_MESH_ROOT', '..')}/firmware/components/network_layer"
+    - "#{ENV.fetch('SIMAI_MESH_ROOT', '..')}/firmware/components/mesh_frame"
+  :include:
+    - "#{ENV.fetch('SIMAI_MESH_ROOT', '..')}/firmware/components/network_layer/include"
+    - "#{ENV.fetch('SIMAI_MESH_ROOT', '..')}/firmware/components/mesh_frame/include"
+    - "#{ENV.fetch('SIMAI_MESH_ROOT', '..')}/firmware/test/host/include"
+:flags:
+  :test:
+    :compile:
+      :*:
+        - -std=c17
+        - -Wall
+        - -Wextra
+        - -Werror
+  :gcov:
+    :compile:
+      - -std=c17
+      - -Wall
+      - -Wextra
+      - -Werror
+:plugins:
+  :enabled:
+    - gcov
