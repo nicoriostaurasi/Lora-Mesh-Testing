@@ -59,7 +59,7 @@ No se combinan los porcentajes unitarios y de integración. La suite instrumenta
 
 Entorno: Ceedling 1.0.0, Unity 2.6.1, Ruby 3.1.2, GCC/gcov 12.2.0, gcovr 5.2, Python 3.11.2. La evidencia identifica la versión exacta del firmware y el estado de la copia de trabajo ensayada.
 
-Ver [resumen y evidencia](../results/2026-10-07_verificacion_03/resumen.md), [reporte unitario HTML](../results/2026-10-07_verificacion_03/unit_coverage.html) y [reporte de integración HTML](../results/2026-10-07_verificacion_03/integration_coverage.html). GitHub puede mostrar el HTML como archivo; descargarlo y abrirlo localmente para visualizarlo.
+Al repetir la ejecución, consultar `resumen.md`, `unit_coverage.html` e `integration_coverage.html` dentro de la nueva carpeta `results/<fecha_hora>/`. Estos archivos se generan al ejecutar el runner y se abren localmente; no se publican en Git.
 
 Los HTML son resúmenes sin código fuente; los JSON registran nombres, números de línea y contadores. La suite pública requiere acceso al firmware para compilar. Los resultados no certifican radio real, SPI, FreeRTOS, sensores, distancia, consumo ni estabilidad prolongada.
 

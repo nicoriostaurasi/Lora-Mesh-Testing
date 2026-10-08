@@ -75,7 +75,7 @@ IS-01 utiliza network_layer y mesh_frame reales para originar, serializar, reenv
 | Función prepare_forward | 25/25 (100 %) | 12/12 (100 %) |
 | Archivo network_layer.c | 84/160 (52,5 %) | 44/122 (36,1 %) |
 
-Mostrar [log de tests](../results/2026-10-07_verificacion_03/unit.log) y [reporte HTML](../results/2026-10-07_verificacion_03/unit_coverage.html). La integración tiene su reporte independiente. Ramas tomadas al menos una vez es la métrica usada; no es MC/DC.
+Antes de la exposición, ejecutar el runner y mostrar `unit.log` y `unit_coverage.html` desde la carpeta local `results/<fecha_hora>/`. La integración tiene su reporte independiente. Ramas tomadas al menos una vez es la métrica usada; no es MC/DC.
 
 ## 8. Conclusiones y límites
 

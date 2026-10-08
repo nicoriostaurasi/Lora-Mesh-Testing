@@ -81,4 +81,4 @@ Los nueve casos se implementan en [test_network_layer.c](../test/unit/test_netwo
 
 IS-01 se implementa en [test_multihop.c](../test/integration/test_multihop.c). Compila `network_layer.c` y `mesh_frame.c` reales. Los tres contextos se ejecutan en un proceso; los nodos no son tres dispositivos físicos y no se simula la propagación RF.
 
-La [corrida registrada](../results/2026-10-07_verificacion_03/resumen.md) obtuvo PASS en todos los casos. Las siete acciones finales del diagrama fueron recorridas y la función elegida alcanzó 100 % de líneas y ramas tomadas. La medición de ramas de GCC no equivale a MC/DC.
+La corrida del 2026-10-07 obtuvo PASS en todos los casos, según el resumen de [ejecución y entrega](ejecucion_y_entrega.md). Las siete acciones finales del diagrama fueron recorridas y la función elegida alcanzó 100 % de líneas y ramas tomadas. La medición de ramas de GCC no equivale a MC/DC.

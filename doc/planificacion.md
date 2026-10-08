@@ -131,4 +131,4 @@ Las tres etapas están documentadas y la automatización produjo 9 PASS unitario
 
 La cobertura de todo el archivo con CP-01 a CP-09 es menor: 52,5 % de líneas y 36,1 % de ramas. Quedan fuera del recorrido unitario construcción de mensajes, eliminación de rutas, consulta de rutas, reinicio de contadores y predicado de entrega local. IS-01 recorre algunas de esas APIs, pero se reporta por separado. Tampoco se cubren completamente desempates de rutas, tabla llena ni todas las validaciones de entrada de APIs de apoyo.
 
-El cierre académico incluye la [presentación preparada](presentacion.md) y su exposición dentro del tiempo de la cátedra. Los resultados y sus límites se registran en la [evidencia de ejecución](../results/2026-10-07_verificacion_03/resumen.md).
+El cierre académico incluye la [presentación preparada](presentacion.md) y su exposición dentro del tiempo de la cátedra. Los resultados y sus límites están resumidos en [ejecución y entrega](ejecucion_y_entrega.md). Los reportes detallados se generan localmente en `results/`, ignorada por Git.

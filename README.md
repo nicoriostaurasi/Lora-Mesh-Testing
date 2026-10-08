@@ -12,7 +12,7 @@ Este repositorio aplica las tres etapas del TP de Testing en Sistemas Embebidos 
 - [Diseño CFT y trazabilidad](doc/casos_cft.md): siete caminos y nueve casos unitarios.
 - [Ejecución y entrega](doc/ejecucion_y_entrega.md): entorno, instrucciones, resultados y checklist.
 - [Presentación en Markdown](doc/presentacion.md): ocho diapositivas con las tres etapas y las conclusiones.
-- [Evidencia de la corrida](results/2026-10-07_verificacion_03/resumen.md): resultados, cobertura, logs y hashes.
+- Evidencias locales: cada ejecución genera `results/<fecha_hora>/` con resultados, cobertura, logs y hashes. Esta carpeta está ignorada por Git.
 
 ## Ejecución rápida
 
@@ -70,7 +70,7 @@ git add testing
 git commit -m "Update testing submodule"
 ```
 
-La configuración toma `SIMAI_MESH_ROOT` para ubicar el firmware. La evidencia registra commit, estado del firmware, versiones y hashes SHA-256 de las fuentes, pruebas y configuraciones ensayadas. Los reportes públicos contienen métricas y nombres, sin publicar el código productivo.
+La configuración toma `SIMAI_MESH_ROOT` para ubicar el firmware. La evidencia registra commit, estado del firmware, versiones y hashes SHA-256 de las fuentes, pruebas y configuraciones ensayadas. Los reportes se generan localmente en `results/`, que está ignorada por Git.
 
 ## Fuentes de la consigna y herramientas
 

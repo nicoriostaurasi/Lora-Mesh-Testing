@@ -1,3 +1,4 @@
 build/
 work/
 __pycache__/
+results/
