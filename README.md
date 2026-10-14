@@ -1,88 +1,33 @@
-# Testing de SIMAI Mesh — Trabajo final de TSSE
+# Testing de SIMAI Mesh
 
-**Versión:** C, actualizada 2026-10-13. **Estado:** suite ampliada a 16 pruebas unitarias y cinco integraciones; ejecución de software verificada, incluidas las comprobaciones STT de IS-01. La defensa oral sigue a cargo del autor.
+Planificación y pruebas de software de los módulos de comunicación de red y formato de mensajes de SIMAI Mesh.
 
-## Propósito
+## Alcance
 
-Este repositorio aplica las tres etapas del TP de Testing en Sistemas Embebidos a SIMAI Mesh: Master Test Plan, generación de casos con CFT y automatización con Ceedling. Se ensaya el código productivo de la capa de red, sin copiar el firmware ni conectar placas.
+- **Pruebas unitarias:** decisiones de entrega, rechazo y reenvío, gestión de rutas y contadores de comunicación de red.
+- **Pruebas de integración:** recorrido sensor-puente-concentrador, límites del contenido, rechazos, cambios de rutas y mensajes inválidos, combinando comunicación de red y formato de mensajes.
+
+Quedan fuera los drivers y periféricos, el control de enlace, el descubrimiento de nodos y la lógica de aplicación y tareas.
+
+## Integración con el repositorio principal
+
+Este repositorio se incorpora como submódulo `testing/`. La suite se ejecuta desde el repositorio principal, que contiene el firmware y la configuración de GitHub Actions.
+
+La automatización utiliza Ceedling y Unity, realiza análisis estático y genera reportes separados de cobertura para unitarios e integración. Los resultados se muestran en los logs del pipeline y los reportes se guardan como artefactos descargables. La carpeta local `results/` está ignorada por Git.
+
+## Resultados
+
+| Suite | Tests PASS | Líneas | Ramas | Funciones |
+|---|---:|---:|---:|---:|
+| Unitarios | 16 | 90 % | 82,8 % | 86,7 % |
+| Integración | 5 | 92,4 % | 78,6 % | 100 % |
+
+La suite unitaria mide comunicación de red; la de integración mide comunicación de red y formato de mensajes. También se ejecutan análisis estático y regresión de red.
 
 ## Documentación
 
-- [Master Test Plan](doc/planificacion.md): alcance, riesgos, características de calidad, niveles, esfuerzo y criterios.
-- [Diseño CFT y trazabilidad](doc/casos_cft.md): siete caminos y nueve casos unitarios.
-- [Ejecución y entrega](doc/ejecucion_y_entrega.md): entorno, instrucciones, resultados y checklist.
-- [Automatización basada en el ejemplo del profesor](doc/automatizacion.md): reportes nativos y workflow de GitHub Actions.
-- [Presentación en Markdown](doc/presentacion.md): ocho diapositivas con las tres etapas y las conclusiones.
-- Evidencias locales: cada ejecución genera `results/<fecha_hora>/` con resultados, cobertura, logs y hashes. Esta carpeta está ignorada por Git.
-
-## Ejecución rápida
-
-Requisitos: Docker Desktop con motor Linux activo (o Docker en Linux), Git y acceso a un clon del firmware SIMAI Mesh. El repositorio de testing es público; no incluye el firmware privado y por eso no se puede ejecutar sin ese clon.
-
-Desde `testing`, en PowerShell:
-
-```powershell
-./scripts/run.ps1
-```
-
-Con testing clonado por separado:
-
-```powershell
-./scripts/run.ps1 -SimaiMeshRoot 'C:/ruta/al/simai-mesh'
-```
-
-Si Git no está en PATH, pasar `-GitCommand` con la ruta al ejecutable. Cada corrida crea una carpeta nueva de evidencia y falla si ese identificador ya existe.
-
-En Linux:
-
-```bash
-bash scripts/run.sh
-# Clon independiente:
-SIMAI_MESH_ROOT=/ruta/al/simai-mesh bash scripts/run.sh
-```
-
-Se usa una imagen oficial de ThrowTheSwitch fijada por digest, con Ceedling 1.0.0, Unity 2.6.1, GCC/gcov 12.2.0 y gcovr 5.2. El firmware se monta en modo de solo lectura. El runner ejecuta análisis estático, tests unitarios, integración, cobertura separada y la suite host de red anterior. No modifica el firmware.
-
-## Resultados del alcance
-
-- CP-01 a CP-16: 16 PASS, sin fallos ni casos ignorados; nueve casos CFT del reenvío y siete casos complementarios de las demás APIs.
-- IS-01: 1 PASS, recorrido sensor-puente-concentrador con serialización real.
-- Análisis GCC `-fanalyzer`: sin diagnósticos para red y formato con advertencias tratadas como errores.
-- `network_layer_prepare_forward()`: 25/25 líneas y 12/12 ramas tomadas, 100 % en el flujo elegido.
-- Todo `network_layer.c`, suite unitaria ampliada: 144/160 líneas (90 %), 101/122 ramas tomadas (82,8 %) y 13/15 funciones (86,7 %).
-
-La cobertura completa del flujo seleccionado no equivale a validar toda la capa de red. El banco con placas, SPI, RF, tareas FreeRTOS, sensores físicos y campo quedan fuera de esta ejecución. Los resultados históricos de hardware son contexto, no resultados nuevos.
-
-## Integración Git
-
-Este repositorio se incorpora como submódulo `testing/` de SIMAI Mesh.
-
-```bash
-git submodule update --init --recursive
-cd testing
-git switch main
-```
-
-Después de publicar cambios aquí, desde la raíz de SIMAI Mesh:
-
-```bash
-git -C testing pull --ff-only origin main
-git add testing
-git commit -m "Update testing submodule"
-```
-
-La configuración toma `SIMAI_MESH_ROOT` para ubicar el firmware. La evidencia registra commit, estado del firmware, versiones y hashes SHA-256 de las fuentes, pruebas y configuraciones ensayadas. Los reportes se generan localmente en `results/`, que está ignorada por Git.
-
-## Fuentes de la consigna y herramientas
-
-Consigna oral reconstruida de `tp_final_tsse.txt` y material del curso de MTP, generación de casos y Ceedling. El MTP está acotado a TSSE y no afirma certificar todo el proyecto de grado.
-
-Referencias técnicas: [Ceedling, ThrowTheSwitch](https://github.com/ThrowTheSwitch/Ceedling), [imagen oficial y ejecución Docker](https://github.com/ThrowTheSwitch/Ceedling#docker) y [gcovr](https://gcovr.com/en/5.2/).
-
-## Diseño de prueba del sistema de software
-
-La defensa muestra [STT del recorrido del mensaje](doc/casos_stt_sistema_software.md): seis estados observables, cinco transiciones y una secuencia IS-01, ejecutable íntegramente en PC. La secuencia verifica construcción, serialización, preparación del reenvío y entrega local. El CFT sigue documentado para los unitarios. No se utilizan placas, radio ni SPI.
-
-## Integración ampliada
-
-16 unitarios y 5 integraciones PASS. Integración: 92,4 % de líneas, 78,6 % de ramas y 100 % de funciones. [Casos y resultados](doc/casos_integracion.md). Corrida vigente: `2026-10-13_integracion_90`.
+- [Master Test Plan](doc/planificacion.md): alcance, prioridades y estrategia de pruebas.
+- [Casos unitarios y trazabilidad](doc/casos_cft.md).
+- [Casos de integración](doc/casos_integracion.md).
+- [Automatización](doc/automatizacion.md).
+- [Ejecución y resultados](doc/ejecucion_y_entrega.md).
