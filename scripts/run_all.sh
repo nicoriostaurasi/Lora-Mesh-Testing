@@ -10,10 +10,49 @@ if [ -e "$RESULT_DIR" ]; then echo "Result directory exists: $RESULT_DIR" >&2; e
 mkdir -p "$RESULT_DIR" build/static build/regression
 run_logged() {
     local name="$1"; shift
-    printf 'Command:' | tee "$RESULT_DIR/$name.log"
-    printf ' %q' "$@" | tee -a "$RESULT_DIR/$name.log"
-    printf '\n' | tee -a "$RESULT_DIR/$name.log"
-    "$@" 2>&1 | tee -a "$RESULT_DIR/$name.log"
+    local status=0
+    printf 'Command:' > "$RESULT_DIR/$name.log"
+    printf ' %q' "$@" >> "$RESULT_DIR/$name.log"
+    printf '\n' >> "$RESULT_DIR/$name.log"
+    if "$@" >> "$RESULT_DIR/$name.log" 2>&1; then
+        status=0
+    else
+        status=$?
+    fi
+    # Some Ceedling tasks return zero even when Unity reports a failed test.
+    # Propagate the actual test failure so CI cannot accept that run.
+    if [ "$status" -eq 0 ] && grep -Eq ':test_[^:]+:FAIL(:|$)' "$RESULT_DIR/$name.log"; then
+        status=1
+    fi
+    case "$name" in
+        unit|integration)
+            awk -F: '
+                { for (i = 1; i < NF; i++) {
+                    if ($i ~ /^test_(CP|IS)[0-9]+_/ && $(i+1) ~ /^(PASS|FAIL|IGNORE)$/) {
+                        number = substr($i, 8, 2) + 0;
+                        if ($i ~ /^test_IS/) number += unit_count;
+                        printf "Test %d: %s\n", number, $(i+1);
+                    }
+                } }
+            ' unit_count="$(grep -hc '^void test_CP[0-9]*_' test/unit/*.c | awk '{s+=$1} END {print s+0}')" "$RESULT_DIR/$name.log"
+            ;;
+        coverage_report|integration_report)
+            if [ "$name" = coverage_report ]; then
+                printf '\nCobertura unitaria:\n'
+            else
+                printf '\nCobertura de integracion:\n'
+            fi
+            grep -E '^(lines|functions|branches):' "$RESULT_DIR/$name.log" || true
+            ;;
+        static_network|static_frame|legacy_regression)
+            if [ "$status" -eq 0 ]; then printf '%s: PASS\n' "$name"; fi
+            ;;
+    esac
+    if [ "$status" -ne 0 ]; then
+        printf '\nFallo en %s. Detalle:\n' "$name" >&2
+        cat "$RESULT_DIR/$name.log" >&2
+        return "$status"
+    fi
 }
 run_logged versions bash -lc 'ceedling version; ruby --version; gcc --version; gcov --version; gcovr --version; python3 --version'
 python3 scripts/record_environment.py
@@ -42,5 +81,4 @@ run_logged legacy_build gcc -std=c17 -Wall -Wextra -Werror "${INCLUDES[@]}" \
     "$SIMAI_MESH_ROOT/firmware/test/host/test_network_layer/test_network_layer.c" \
     -o build/regression/test_network_layer
 run_logged legacy_regression build/regression/test_network_layer
-python3 scripts/summarize.py
 printf '\nEvidence saved to %s\n' "$RESULT_DIR"

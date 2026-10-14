@@ -17,6 +17,17 @@ static void wire_roundtrip(const mesh_frame_t *input, mesh_frame_t *output)
     size_t length = 0;
     TEST_ASSERT_EQUAL(MESH_FRAME_OK, mesh_frame_pack(input, wire, sizeof(wire), &length));
     TEST_ASSERT_EQUAL(MESH_FRAME_OK, mesh_frame_unpack(wire, length, output));
+    TEST_ASSERT_EQUAL(input->frame_type, output->frame_type);
+    TEST_ASSERT_EQUAL_UINT8(input->flags, output->flags);
+    TEST_ASSERT_EQUAL_UINT8(input->src_addr, output->src_addr);
+    TEST_ASSERT_EQUAL_UINT8(input->dst_addr, output->dst_addr);
+    TEST_ASSERT_EQUAL_UINT8(input->prev_hop, output->prev_hop);
+    TEST_ASSERT_EQUAL_UINT8(input->next_hop, output->next_hop);
+    TEST_ASSERT_EQUAL_UINT16(input->msg_id, output->msg_id);
+    TEST_ASSERT_EQUAL_UINT8(input->ttl, output->ttl);
+    TEST_ASSERT_EQUAL_UINT8(input->hop_count, output->hop_count);
+    TEST_ASSERT_EQUAL_UINT8(input->payload_len, output->payload_len);
+    TEST_ASSERT_EQUAL_UINT8_ARRAY(input->payload, output->payload, input->payload_len);
 }
 
 static void assert_counters(const network_layer_t *node,
@@ -42,15 +53,49 @@ void test_IS01_sensor_bridge_concentrator_preserves_message_over_wire_format(voi
     TEST_ASSERT_EQUAL(ESP_OK, network_layer_upsert_route(&bridge, 3, 3, 1, 1000, -15, 14, 1000));
     const uint8_t payload[] = {0x10, 0x20, 0x30, 0x40};
     mesh_frame_t tx, received_at_bridge, received_at_concentrator;
+    /* S0: fresh contexts and routes; no message has been processed. */
+    assert_counters(&sensor, 0, 0, 0);
+    assert_counters(&bridge, 0, 0, 0);
+    assert_counters(&concentrator, 0, 0, 0);
+    /* T1 -> S1: originate the message at the sensor. */
     TEST_ASSERT_EQUAL(ESP_OK, network_layer_build_data(
         &sensor, 3, MESH_FRAME_TYPE_DATA_BEST_EFFORT, payload, sizeof(payload), &tx));
     TEST_ASSERT_EQUAL_UINT8(2, tx.next_hop);
     TEST_ASSERT_EQUAL_UINT8(4, tx.ttl);
     TEST_ASSERT_EQUAL_UINT8(0, tx.hop_count);
+    TEST_ASSERT_EQUAL_UINT8(1, tx.prev_hop);
+    TEST_ASSERT_EQUAL_UINT8(1, tx.src_addr);
+    TEST_ASSERT_EQUAL_UINT8(3, tx.dst_addr);
+    TEST_ASSERT_EQUAL_UINT8(sizeof(payload), tx.payload_len);
+    TEST_ASSERT_EQUAL_UINT8_ARRAY(payload, tx.payload, sizeof(payload));
+    assert_counters(&sensor, 1, 0, 0);
+    /* T2 -> S2: encode/decode preserves all fields at the bridge. */
     wire_roundtrip(&tx, &received_at_bridge);
+    assert_counters(&bridge, 0, 0, 0);
+    /* T3 -> S3: prepare the next software hop, without radio transmission. */
     TEST_ASSERT_EQUAL(ESP_OK, network_layer_prepare_forward(&bridge, &received_at_bridge));
+    TEST_ASSERT_EQUAL_UINT8(3, received_at_bridge.ttl);
+    TEST_ASSERT_EQUAL_UINT8(1, received_at_bridge.hop_count);
+    TEST_ASSERT_EQUAL_UINT8(2, received_at_bridge.prev_hop);
+    TEST_ASSERT_EQUAL_UINT8(3, received_at_bridge.next_hop);
+    TEST_ASSERT_EQUAL(tx.frame_type, received_at_bridge.frame_type);
+    TEST_ASSERT_EQUAL_UINT8(tx.flags, received_at_bridge.flags);
+    TEST_ASSERT_EQUAL_UINT8(tx.src_addr, received_at_bridge.src_addr);
+    TEST_ASSERT_EQUAL_UINT8(tx.dst_addr, received_at_bridge.dst_addr);
+    TEST_ASSERT_EQUAL_UINT16(tx.msg_id, received_at_bridge.msg_id);
+    TEST_ASSERT_EQUAL_UINT8(sizeof(payload), received_at_bridge.payload_len);
+    TEST_ASSERT_EQUAL_UINT8_ARRAY(payload, received_at_bridge.payload, sizeof(payload));
+    assert_counters(&bridge, 0, 1, 0);
+    /* T4 -> S4: second encode/decode preserves the prepared frame. */
     wire_roundtrip(&received_at_bridge, &received_at_concentrator);
+    assert_counters(&concentrator, 0, 0, 0);
+    const mesh_frame_t before_delivery = received_at_concentrator;
+    /* T5 -> S5: local delivery preserves the forwarding fields. */
     TEST_ASSERT_EQUAL(ESP_OK, network_layer_prepare_forward(&concentrator, &received_at_concentrator));
+    TEST_ASSERT_EQUAL_UINT8(before_delivery.prev_hop, received_at_concentrator.prev_hop);
+    TEST_ASSERT_EQUAL_UINT8(before_delivery.next_hop, received_at_concentrator.next_hop);
+    TEST_ASSERT_EQUAL_UINT8(before_delivery.ttl, received_at_concentrator.ttl);
+    TEST_ASSERT_EQUAL_UINT8(before_delivery.hop_count, received_at_concentrator.hop_count);
     TEST_ASSERT_TRUE(network_layer_is_local_delivery(&concentrator, &received_at_concentrator));
     TEST_ASSERT_EQUAL(tx.frame_type, received_at_concentrator.frame_type);
     TEST_ASSERT_EQUAL_UINT8(tx.flags, received_at_concentrator.flags);

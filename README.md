@@ -1,6 +1,6 @@
 # Testing de SIMAI Mesh — Trabajo final de TSSE
 
-**Versión:** B, 2026-10-07. **Estado:** planificación, casos y automatización implementados; suite de software verificada. La defensa oral sigue a cargo del autor.
+**Versión:** C, actualizada 2026-10-10. **Estado:** suite ampliada a 16 pruebas unitarias y una integración; ejecución de software verificada, incluidas las comprobaciones STT de IS-01. La defensa oral sigue a cargo del autor.
 
 ## Propósito
 
@@ -11,6 +11,7 @@ Este repositorio aplica las tres etapas del TP de Testing en Sistemas Embebidos 
 - [Master Test Plan](doc/planificacion.md): alcance, riesgos, características de calidad, niveles, esfuerzo y criterios.
 - [Diseño CFT y trazabilidad](doc/casos_cft.md): siete caminos y nueve casos unitarios.
 - [Ejecución y entrega](doc/ejecucion_y_entrega.md): entorno, instrucciones, resultados y checklist.
+- [Automatización basada en el ejemplo del profesor](doc/automatizacion.md): reportes nativos y workflow de GitHub Actions.
 - [Presentación en Markdown](doc/presentacion.md): ocho diapositivas con las tres etapas y las conclusiones.
 - Evidencias locales: cada ejecución genera `results/<fecha_hora>/` con resultados, cobertura, logs y hashes. Esta carpeta está ignorada por Git.
 
@@ -44,11 +45,11 @@ Se usa una imagen oficial de ThrowTheSwitch fijada por digest, con Ceedling 1.0.
 
 ## Resultados del alcance
 
-- CP-01 a CP-09: 9 PASS, sin fallos ni casos ignorados.
+- CP-01 a CP-16: 16 PASS, sin fallos ni casos ignorados; nueve casos CFT del reenvío y siete casos complementarios de las demás APIs.
 - IS-01: 1 PASS, recorrido sensor-puente-concentrador con serialización real.
 - Análisis GCC `-fanalyzer`: sin diagnósticos para red y formato con advertencias tratadas como errores.
 - `network_layer_prepare_forward()`: 25/25 líneas y 12/12 ramas tomadas, 100 % en el flujo elegido.
-- Todo `network_layer.c`, suite unitaria: 84/160 líneas (52,5 %) y 44/122 ramas (36,1 %).
+- Todo `network_layer.c`, suite unitaria ampliada: 144/160 líneas (90 %), 101/122 ramas tomadas (82,8 %) y 13/15 funciones (86,7 %).
 
 La cobertura completa del flujo seleccionado no equivale a validar toda la capa de red. El banco con placas, SPI, RF, tareas FreeRTOS, sensores físicos y campo quedan fuera de esta ejecución. Los resultados históricos de hardware son contexto, no resultados nuevos.
 
@@ -77,3 +78,7 @@ La configuración toma `SIMAI_MESH_ROOT` para ubicar el firmware. La evidencia r
 Consigna oral reconstruida de `tp_final_tsse.txt` y material del curso de MTP, generación de casos y Ceedling. El MTP está acotado a TSSE y no afirma certificar todo el proyecto de grado.
 
 Referencias técnicas: [Ceedling, ThrowTheSwitch](https://github.com/ThrowTheSwitch/Ceedling), [imagen oficial y ejecución Docker](https://github.com/ThrowTheSwitch/Ceedling#docker) y [gcovr](https://gcovr.com/en/5.2/).
+
+## Diseño de prueba del sistema de software
+
+La defensa muestra [STT del recorrido del mensaje](doc/casos_stt_sistema_software.md): seis estados observables, cinco transiciones y una secuencia IS-01, ejecutable íntegramente en PC. La secuencia verifica construcción, serialización, preparación del reenvío y entrega local. El CFT sigue documentado para los unitarios. No se utilizan placas, radio ni SPI.

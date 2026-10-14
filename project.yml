@@ -34,3 +34,10 @@
 :plugins:
   :enabled:
     - gcov
+    - report_tests_log_factory
+:report_tests_log_factory:
+  :report_path: build/unit/artifacts/test
+  :reports:
+    - json
+    - junit
+    - html

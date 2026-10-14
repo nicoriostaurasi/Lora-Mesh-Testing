@@ -77,8 +77,32 @@ Este caso prueba integración de software. No usa radio ni simula propagación, 
 
 ## Implementación y evidencia
 
+La versión C conserva CP-01 a CP-09 como derivación CFT del reenvío y agrega CP-10 a CP-16 sobre las demás APIs. Son 16 unitarios en total; no se presentan las pruebas adicionales como nuevos caminos de ese mismo flujo.
+
 Los nueve casos se implementan en [test_network_layer.c](../test/unit/test_network_layer.c). Los nombres `test_CP01_*` a `test_CP09_*` conservan la relación con la tabla, cuyos identificadores son CP-01 a CP-09. Las aserciones comparan campos individuales, payload y los seis contadores; no comparan padding de estructuras.
 
 IS-01 se implementa en [test_multihop.c](../test/integration/test_multihop.c). Compila `network_layer.c` y `mesh_frame.c` reales. Los tres contextos se ejecutan en un proceso; los nodos no son tres dispositivos físicos y no se simula la propagación RF.
 
 La corrida del 2026-10-07 obtuvo PASS en todos los casos, según el resumen de [ejecución y entrega](ejecucion_y_entrega.md). Las siete acciones finales del diagrama fueron recorridas y la función elegida alcanzó 100 % de líneas y ramas tomadas. La medición de ramas de GCC no equivale a MC/DC.
+
+## Casos complementarios de la versión C
+
+Se usan particiones válidas/inválidas, valores límite y combinaciones de métricas. La regla de selección ensayada es: menos saltos, mayor entrega, mayor RSSI, mayor SNR; a igualdad completa se conserva la primera entrada. Esta regla caracteriza el contrato actual; no demuestra descubrimiento ni recuperación RF.
+
+| Caso | Comportamiento esperado |
+|---|---|
+| CP-10 | Inicialización: nulos rechazados, TTL por defecto y limpieza del estado. |
+| CP-11 | Validación de rutas y selección; límites de entrega 0/1000; salida intacta ante error. |
+| CP-12 | Actualizar y eliminar rutas sin afectar otras entradas. |
+| CP-13 | Prioridad: saltos, entrega, RSSI y SNR; empate conserva primera ruta. Cada escenario reinicializa el contexto. |
+| CP-14 | Mensajes de 0, 1 y 64 bytes; ambos tipos de datos; cabecera, payload e ID. |
+| CP-15 | Argumentos inválidos y ruta ausente: errores y efectos laterales esperados. Escenarios independientes. |
+| CP-16 | Copia y reinicio de estadísticas sin alterar rutas ni ID. |
+
+Resultado: 16 unitarios PASS y una integración PASS, corrida `2026-10-10_stt_verificado`. Cobertura unitaria de `network_layer.c`: 144/160 líneas (90 %), 101/122 ramas (82,8 %) y 13/15 funciones (86,7 %). Reenvío: 25/25 líneas y 12/12 ramas (100 %). No es MC/DC.
+
+La suite conserva los nueve casos CFT y siete complementarios agrupados por comportamiento. El objetivo orientativo es cerca del 90 % de líneas, sin exigir 100 % ni alterar el código productivo. No es un requisito numérico del profesor. Quedan sin ensayo dedicado la expulsión de rutas con tabla llena, el retorno del ID al superar 65535, los getters de rutas y el predicado de entrega local; también algunas validaciones de argumentos. Esas limitaciones se declaran, no se excluyen del cálculo de cobertura.
+
+## Relación con el diseño del sistema de software
+
+Este CFT modela una función y fundamenta CP-01 a CP-09. Para mostrar explícitamente el diseño de una prueba del sistema de software solicitado en la última clase, se añade [el modelo STT y la derivación de IS-01](casos_stt_sistema_software.md). Son dos objetos de prueba distintos: decisiones internas del reenvío y recorrido completo del mensaje entre tres contextos en PC.

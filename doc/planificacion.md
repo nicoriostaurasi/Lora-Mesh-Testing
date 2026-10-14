@@ -8,6 +8,8 @@ SIMAI Mesh es un prototipo de red de sensores LoRa sobre Heltec WiFi LoRa 32 V3 
 
 **Incluido en la ejecución de TSSE:** pruebas unitarias de `network_layer_prepare_forward()` y sus dependencias internas, usando las APIs públicas para inicializar y cargar rutas; cobertura del archivo `network_layer.c`. También se ejecuta integración de software con `mesh_frame` para el recorrido de tres nodos (IS-01).
 
+**Ampliación C:** además del CFT inicial se prueban inicialización, validaciones, selección/actualización/eliminación de rutas, construcción de mensajes, límites de payload y estadísticas. La fila de resultados de versión B al final conserva el alcance histórico; el cierre vigente es la versión C.
+
 **Fuera de la ejecución comprometida:** radio/SPI reales, tareas FreeRTOS, sensores físicos, OLED/LED, alcance RF, consumo, estabilidad de varias horas y recuperación mediante caminos alternativos reales. La selección de rutas se usa como apoyo del reenvío; una caracterización exhaustiva de sus desempates y capacidad de tabla queda para una ampliación.
 
 ## 2. Bases de prueba
@@ -64,32 +66,30 @@ Los porcentajes representan importancia relativa de las características, no cob
 
 Se usa el vocabulario de calidad trabajado en el MTP del curso. Rendimiento RF, autonomía y portabilidad entre placas se difieren. Usabilidad de consola/pantalla se excluye del alcance de red. Seguridad y seguridad funcional no se validan en este TP: su exclusión no significa que carezcan de importancia para una futura versión operativa.
 
-### Tabla B — Características, niveles, tipos y momento
+### Tabla B — Importancia relativa de subsistemas
 
-`++`: énfasis principal del nivel; `+`: aporte parcial; `—`: fuera del alcance de ese nivel. Estas marcas no prometen cobertura completa de toda la característica.
+Ponderación propuesta para los módulos incluidos en este TP, no porcentajes de cobertura ni horas medidas. Se concentra el 80 % en comunicación de red porque allí están las decisiones de rutas, entrega/reenvío/rechazo y errores. El 20 % restante corresponde al formato y conservación de los mensajes. Los fixtures son recursos para ejecutar las pruebas, no un tercer subsistema del producto.
 
-| Nivel | Funcionalidad | Confiabilidad | Mantenibilidad | Tipo/objetivo | Momento y responsable | Estado para TSSE |
-|---|---|---|---|---|---|---|
-| Unitario en PC | ++ | ++ | + | Pruebas funcionales positivas/negativas y regresión de red | Autor del TP, tras diseñar los casos y ante cambios | Ejecución comprometida con Ceedling. |
-| Integración de software en PC | ++ | + | + | Red + serialización de tramas; preservación de datos | Autor del TP, tras los unitarios | IS-01 implementada y ejecutada; existe además un escenario host previo. |
-| Integración HW/SW en banco | + | + | — | SPI, radio y firmware reales | Autor del proyecto, después del build del target | Fuera de ejecución TSSE; evidencia histórica complementaria. |
-| Sistema en banco | ++ | + | — | Entrega sensor-puente-concentrador y pérdida de puente | Autor del proyecto, con perfiles y versión registrados | Fuera de ejecución TSSE; hay resultados registrados. |
-| Campo | + | ++ | — | Distancia, obstáculos, interferencia y estabilidad | Autor del proyecto, en una campaña posterior | Diferido; no se demuestra con simulación. |
+| Subsistema | Importancia relativa | Foco |
+|---|---:|---|
+| Comunicación de red (`network_layer`) | 80 % | Decisiones, rutas, errores y contadores. |
+| Formato de mensajes (`mesh_frame`) | 20 % | Codificación y conservación. |
+| Total del alcance seleccionado | 100 % | |
 
-La regresión reutiliza los tests luego de cada modificación relevante. No se exige implementar CI para este alcance.
+### Tabla C — Cruce de calidad, nivel, técnica y momento
 
-### Tabla C — Subsistemas y distribución de esfuerzo
+`++`: énfasis principal; `+`: aporte parcial. Son prioridades de planificación, no cobertura medida ni certificación de una característica completa.
 
-Estimación del esfuerzo de diseño y ejecución del alcance de software: no son tiempos observados. El porcentaje asignado a módulos de apoyo incluye preparar fixtures y verificar su interacción; no implica una suite propia completa para cada módulo.
+| Subsistema / nivel | Funcionalidad | Confiabilidad | Mantenibilidad | Cómo / técnica | Cuándo |
+|---|---|---|---|---|---|
+| Comunicación de red / unitarios | ++ | ++ | + | CFT de reenvío, límites y errores. | Tras diseñar casos y ante cambios. |
+| Comunicación de red + formato / integración | ++ | + | + | STT del recorrido exitoso; comprobar cada paso. | Tras diseñar STT y pasar unitarios. |
 
-| Subsistema | Esfuerzo | Funcionalidad | Confiabilidad | Mantenibilidad | Técnica/actividad |
-|---|---:|---|---|---|---|
-| `network_layer` | 70 % | ++ | ++ | + | CFT nivel 1 sobre preparación del reenvío y casos de borde. |
-| `mesh_frame` | 20 % | ++ | + | + | Integración pack/unpack del recorrido de tres nodos (IS-01 ejecutada). |
-| Fixtures de trama y muestra (`sensor_app` como contexto) | 10 % | + | + | + | Preparar payload determinístico y comprobar conservación. |
-| Total | 100 % | | | | |
+La regresión aporta a mantenibilidad mediante una suite repetible. La integración de éxito comprueba funcionamiento y conservación del mensaje, sin acreditar recuperación ante fallos o estabilidad prolongada. Conservación es un resultado esperado de funcionalidad, no una característica de calidad independiente.
 
-`link_layer` (ACK/reintentos), `neighbor_discovery` (expiración), driver SX1262 y runtimes son importantes para el proyecto completo, pero no reciben ejecución nueva en esta entrega. Se reutilizan sus documentos para contextualizar el sistema. Los datos simulados no requieren probar adquisición de un sensor real.
+Fuera de esta entrega: drivers/periféricos, control de enlace (ACK/reintentos), descubrimiento y mensajes de presencia, lógica de aplicación y ejecución de tareas. No se asigna ejecución ni se promete trabajo futuro para estos grupos. Las pruebas físicas históricas se conservan como contexto en la sección 7 y no se mezclan con esta tabla de planificación.
+
+Las letras A y B siguen el material de MTP del curso: características ponderadas y subsistemas ponderados. C es el resumen combinado del cruce y de técnicas/momentos para esta defensa, no el nombre de una tercera tabla obligatoria enumerada por el profesor. La última clase pide dos o tres cuadros resumidos que expliquen qué, cómo y cuándo probar.
 
 ## 5. Recursos y preparación
 
@@ -132,3 +132,19 @@ Las tres etapas están documentadas y la automatización produjo 9 PASS unitario
 La cobertura de todo el archivo con CP-01 a CP-09 es menor: 52,5 % de líneas y 36,1 % de ramas. Quedan fuera del recorrido unitario construcción de mensajes, eliminación de rutas, consulta de rutas, reinicio de contadores y predicado de entrega local. IS-01 recorre algunas de esas APIs, pero se reporta por separado. Tampoco se cubren completamente desempates de rutas, tabla llena ni todas las validaciones de entrada de APIs de apoyo.
 
 El cierre académico incluye la [presentación preparada](presentacion.md) y su exposición dentro del tiempo de la cátedra. Los resultados y sus límites están resumidos en [ejecución y entrega](ejecucion_y_entrega.md). Los reportes detallados se generan localmente en `results/`, ignorada por Git.
+
+## 9. Ampliación y cierre de versión C
+
+Se amplía la suite a 16 pruebas unitarias: CP-01 a CP-09 derivadas por CFT, y CP-10 a CP-16 por particiones, límites y combinaciones de prioridades de ruta. IS-01 sigue como integración separada. La ponderación vigente 80/20 concentra la prioridad en comunicación de red y formato; fixtures no se consideran un subsistema del producto.
+
+La corrida `2026-10-10_stt_verificado` pasó los 16 unitarios y la integración; análisis estático y regresión host PASS. El archivo `network_layer.c` registra 144/160 líneas (90 %), 101/122 ramas (82,8 %) y 13/15 funciones (86,7 %). Así quedan ensayadas las APIs antes pendientes, incluyendo selección, desempates y construcción de mensajes. La integración mantiene su propia cobertura, sin sumar porcentajes.
+
+Se conserva fuera de alcance: RF, SPI, tareas FreeRTOS, sensores físicos y consumo. La cobertura medida no implica MC/DC, ausencia de defectos ni cobertura exhaustiva de todos los estados del sistema. No se agrega un umbral impuesto por la cátedra. La evidencia identifica estado y hashes del código bajo prueba.
+
+La suite conserva los nueve casos CFT y siete complementarios agrupados por comportamiento. El objetivo orientativo es cerca del 90 % de líneas, sin exigir 100 % ni alterar el código productivo. No es un requisito numérico del profesor. Quedan sin ensayo dedicado la expulsión de rutas con tabla llena, el retorno del ID al superar 65535, los getters de rutas y el predicado de entrega local; también algunas validaciones de argumentos. Esas limitaciones se declaran, no se excluyen del cálculo de cobertura.
+
+## 10. Diseño del recorrido de sistema en software (actualización 2026-10-10)
+
+Para el punto 3 de la última clase se desarrolla [STT del recorrido sensor–puente–concentrador](casos_stt_sistema_software.md). El sistema seleccionado es la composición de tres contextos de red y el formato de mensajes en PC. La técnica produce IS-01: un recorrido de cinco transiciones del modelo de éxito, con precondiciones y resultados intermedios. No se presenta como cobertura de todo el sistema ni como FSM implementada en el firmware.
+
+Los 16 unitarios siguen demostrando el punto 4. CFT se conserva como técnica complementaria de esos unitarios; no se requiere mostrar dos derivaciones completas en la defensa. No se amplía el alcance a radio/SPI, placas ni FreeRTOS. La prueba de integración se refuerza con comprobaciones en cada transición, sin aumentar la cantidad de casos.
