@@ -1,5 +1,14 @@
 # Diseño STT del recorrido sensor–puente–concentrador
 
+## Resultado vigente — integración ampliada (13 de octubre de 2026)
+
+Suite completa verificada: **16 unitarios y 5 integraciones PASS**, sin fallos ni casos ignorados; análisis estático y regresión host PASS. Corrida `results/2026-10-13_integracion_90/`, en el nuevo repositorio LORA_MESH_TESTING con firmware copiado de SIMAI Mesh y los mismos módulos reales. El código de los tests se sincronizó en ambos clones; no se acredita una segunda ejecución en el clon original.
+
+Cobertura de integración: **232/251 líneas (92,4 %), 132/168 ramas (78,6 %) y 21/21 funciones (100 %)**. Cobertura unitaria sin cambios: 90 % de líneas y 82,8 % de ramas. Los cinco casos están descritos en [casos_integracion.md](casos_integracion.md); IS-01 mantiene la derivación STT mostrada y los otros cuatro incorporan límites, errores, cambios de rutas y corrupción de mensajes. Son cinco funciones de test, algunas con variantes parametrizadas. El objetivo del 90 % se refiere a líneas.
+
+La cobertura anterior de integración de 65,7 % correspondía a IS-01 sola. Las referencias a esa corrida en el historial no representan el resultado vigente. No se modificó firmware ni se usaron placas. `results/` continúa ignorada y no se hicieron commits ni push.
+
+
 ## Objeto de la prueba
 
 Comprobar que un mensaje originado en el sensor llega al concentrador a través del puente, conservando identidad y contenido, y actualizando correctamente cabecera y contadores.

@@ -30,10 +30,12 @@ Trama con TTL cero y ruta disponible: esperar TTL_EXPIRED, conservar trama e inc
 
 ## 8–9. Ejecución y cobertura (1,5 minutos)
 
-Mostrar extracto de logs reales y reporte. Suite: 16 unitarios y una integración. Consultar la corrida vigente y sus resultados en [ejecución y entrega](ejecucion_y_entrega.md). Los unitarios cubren 144/160 líneas (90 %), 101/122 ramas (82,8 %) y 13/15 funciones (86,7 %) de network_layer.c. prepare_forward: 25/25 líneas y 12/12 ramas (100 %). La cobertura de integración se informa por separado; no es MC/DC.
+Mostrar extracto de logs reales y reporte. Suite: 16 unitarios y cinco integraciones. Consultar la corrida vigente y sus resultados en [ejecución y entrega](ejecucion_y_entrega.md). Los unitarios cubren 144/160 líneas (90 %), 101/122 ramas (82,8 %) y 13/15 funciones (86,7 %) de network_layer.c. prepare_forward: 25/25 líneas y 12/12 ramas (100 %). La cobertura de integración se informa por separado; no es MC/DC.
 
 ## 10. Conclusión (0,5 minutos)
 
 Contexto acotado, MTP resumido, diseño STT aplicado al recorrido de software e implementación unitaria con evidencia. No se extrapolan los resultados a radio, consumo o hardware. Quedan límites de la suite y del modelo documentados. No se promete 100 % del sistema.
 
 El CFT original se conserva en [casos_cft.md](casos_cft.md) como respaldo de los nueve casos iniciales, sin ocupar una segunda derivación completa en la exposición.
+
+La ejecución vigente incluye IS-01 a IS-05: integración con 92,4 % de líneas (232/251), 78,6 % de ramas (132/168) y 100 % de funciones. La derivación STT de las diapositivas 4–5 sigue mostrando IS-01; los otros cuatro escenarios complementan la suite.

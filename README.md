@@ -1,6 +1,6 @@
 # Testing de SIMAI Mesh — Trabajo final de TSSE
 
-**Versión:** C, actualizada 2026-10-10. **Estado:** suite ampliada a 16 pruebas unitarias y una integración; ejecución de software verificada, incluidas las comprobaciones STT de IS-01. La defensa oral sigue a cargo del autor.
+**Versión:** C, actualizada 2026-10-13. **Estado:** suite ampliada a 16 pruebas unitarias y cinco integraciones; ejecución de software verificada, incluidas las comprobaciones STT de IS-01. La defensa oral sigue a cargo del autor.
 
 ## Propósito
 
@@ -82,3 +82,7 @@ Referencias técnicas: [Ceedling, ThrowTheSwitch](https://github.com/ThrowTheSwi
 ## Diseño de prueba del sistema de software
 
 La defensa muestra [STT del recorrido del mensaje](doc/casos_stt_sistema_software.md): seis estados observables, cinco transiciones y una secuencia IS-01, ejecutable íntegramente en PC. La secuencia verifica construcción, serialización, preparación del reenvío y entrega local. El CFT sigue documentado para los unitarios. No se utilizan placas, radio ni SPI.
+
+## Integración ampliada
+
+16 unitarios y 5 integraciones PASS. Integración: 92,4 % de líneas, 78,6 % de ramas y 100 % de funciones. [Casos y resultados](doc/casos_integracion.md). Corrida vigente: `2026-10-13_integracion_90`.
