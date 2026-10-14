@@ -31,7 +31,7 @@ run_logged() {
                     if ($i ~ /^test_(CP|IS)[0-9]+_/ && $(i+1) ~ /^(PASS|FAIL|IGNORE)$/) {
                         number = substr($i, 8, 2) + 0;
                         if ($i ~ /^test_IS/) number += unit_count;
-                        printf "Test %d: %s\n", number, $(i+1);
+                        printf "TEST %02d: %s - %s\n", number, $(i+1), $i;
                     }
                 } }
             ' unit_count="$(grep -hc '^void test_CP[0-9]*_' test/unit/*.c | awk '{s+=$1} END {print s+0}')" "$RESULT_DIR/$name.log"
