@@ -3,11 +3,14 @@ set -euo pipefail
 cd /testing
 export SIMAI_MESH_ROOT="${SIMAI_MESH_ROOT:-/simai}"
 export TZ=America/Argentina/Buenos_Aires
-RUN_ID="${RUN_ID:-$(date +%Y-%m-%d_%H-%M-%S)}"
-case "$RUN_ID" in *[!a-zA-Z0-9_-]*) echo 'Invalid RUN_ID' >&2; exit 2;; esac
-export RESULT_DIR="results/$RUN_ID"
-if [ -e "$RESULT_DIR" ]; then echo "Result directory exists: $RESULT_DIR" >&2; exit 2; fi
+export RESULT_DIR="results"
+if [ -L "$RESULT_DIR" ]; then echo 'results must not be a symlink' >&2; exit 2; fi
 mkdir -p "$RESULT_DIR" build/static build/regression
+if [ "$(realpath -- "$RESULT_DIR")" != /testing/results ]; then
+    echo 'Unexpected results directory; refusing cleanup' >&2; exit 2
+fi
+# Replace only the contents of the fixed results directory before each run.
+find "$RESULT_DIR" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
 run_logged() {
     local name="$1"; shift
     local status=0

@@ -13,7 +13,7 @@ Quedan fuera los drivers y periféricos, el control de enlace, el descubrimiento
 
 Este repositorio se incorpora como submódulo `testing/`. La suite se ejecuta desde el repositorio principal, que contiene el firmware y la configuración de GitHub Actions.
 
-La automatización utiliza Ceedling y Unity, realiza análisis estático y genera reportes separados de cobertura para unitarios e integración. Los resultados se muestran en los logs del pipeline y los reportes se guardan como artefactos descargables. La carpeta local `results/` está ignorada por Git.
+La automatización utiliza Ceedling y Unity, realiza análisis estático y genera reportes separados de cobertura para unitarios e integración. Los resultados se muestran en los logs del pipeline y los reportes se guardan como artefactos descargables. La carpeta local `results/` está ignorada por Git. Cada ejecución reemplaza su contenido; no se crean subcarpetas por fecha.
 
 ## Resultados
 

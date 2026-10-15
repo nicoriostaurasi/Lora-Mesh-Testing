@@ -27,7 +27,7 @@ Ceedling genera sus reportes en:
 - `build/unit/artifacts/test/`: suite unitaria.
 - `build/integration/artifacts/test/`: integración.
 
-`build/` y `results/` están ignoradas por Git. Los logs y la cobertura de gcovr permanecen en `results/<fecha_hora>/`. La generación se realiza mediante plugins nativos, sin un script propio de resumen.
+`build/` y `results/` están ignoradas por Git. Los logs y la cobertura de gcovr permanecen en `results/`. La generación se realiza mediante plugins nativos, sin un script propio de resumen.
 
 ## GitHub Actions y acceso al firmware
 

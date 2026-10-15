@@ -18,7 +18,7 @@ La preparación/carga de rutas es controlada por el ensayo; IS-04 no demuestra d
 
 ## Ejecución verificada
 
-Corrida: `results/2026-10-13_integracion_90/`.
+Corrida: `results/`.
 
 - 16 unitarios PASS y 5 integraciones PASS; sin fallos ni casos ignorados.
 - Integración conjunta: **232/251 líneas (92,4 %)**, **132/168 ramas (78,6 %)** y **21/21 funciones (100 %)**.

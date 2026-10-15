@@ -1,8 +1,13 @@
 # Ejecución y entrega del TP
 
+## Salida de resultados
+
+Los logs, reportes y metadatos se escriben directamente en `results/`, reemplazando todo su contenido en cada ejecución. No se usa `RunId`. Las referencias antiguas a carpetas fechadas son antecedentes; esas evidencias no se conservan automáticamente con este esquema. La limpieza se limita a `/testing/results` y rechaza que esa carpeta sea un enlace simbólico.
+
+
 ## Resultado vigente — integración ampliada (13 de octubre de 2026)
 
-Suite completa verificada: **16 unitarios y 5 integraciones PASS**, sin fallos ni casos ignorados; análisis estático y regresión host PASS. Corrida `results/2026-10-13_integracion_90/`, en el nuevo repositorio LORA_MESH_TESTING con firmware copiado de SIMAI Mesh y los mismos módulos reales. El código de los tests se sincronizó en ambos clones; no se acredita una segunda ejecución en el clon original.
+Suite completa verificada: **16 unitarios y 5 integraciones PASS**, sin fallos ni casos ignorados; análisis estático y regresión host PASS. Corrida `results/`, en el nuevo repositorio LORA_MESH_TESTING con firmware copiado de SIMAI Mesh y los mismos módulos reales. El código de los tests se sincronizó en ambos clones; no se acredita una segunda ejecución en el clon original.
 
 Cobertura de integración: **232/251 líneas (92,4 %), 132/168 ramas (78,6 %) y 21/21 funciones (100 %)**. Cobertura unitaria sin cambios: 90 % de líneas y 82,8 % de ramas. Los cinco casos están descritos en [casos_integracion.md](casos_integracion.md); IS-01 mantiene la derivación STT mostrada y los otros cuatro incorporan límites, errores, cambios de rutas y corrupción de mensajes. Son cinco funciones de test, algunas con variantes parametrizadas. El objetivo del 90 % se refiere a líneas.
 
@@ -38,7 +43,7 @@ SIMAI_MESH_ROOT=/ruta/al/simai-mesh bash scripts/run.sh
 
 Docker descarga la imagen si no está disponible. Se fija el digest `sha256:90f393775dbe7e77b089292903a0e046e183caa8ccee9a83a759fe7cb6ea146a` de la imagen oficial `throwtheswitch/madsciencelab-plugins:1.0.0`. Evita depender de una etiqueta móvil.
 
-El runner valida la ruta y crea `results/<fecha_hora>/`; rechaza identificadores ya existentes para conservar evidencias. Monta el firmware como solo lectura, ejecuta con `set -euo pipefail` y devuelve error si alguna etapa falla. Los builds regenerables quedan ignorados por Git en `build/`.
+El runner valida la ruta y limpia el contenido anterior de `results/`; cada ejecución escribe directamente en esa carpeta y reemplaza la anterior. Monta el firmware como solo lectura, ejecuta con `set -euo pipefail` y devuelve error si alguna etapa falla. Los builds regenerables quedan ignorados por Git en `build/`.
 
 Dentro del contenedor la secuencia es:
 
@@ -71,7 +76,7 @@ Entorno: Ceedling 1.0.0, Unity 2.6.1, Ruby 3.1.2, GCC/gcov 12.2.0, gcovr 5.2, Py
 
 Corrida vigente: `2026-10-10_stt_verificado`. La corrida anterior ampliada registró un fallo del helper al comparar arrays de longitud cero; se corrigió el helper sin cambiar firmware ni expectativas. Se conserva como evidencia intermedia, no como resultado final. La cobertura anterior de 52,5 %/36,1 % pertenece a los nueve tests iniciales. La cobertura actual mide ejecución, no corrección exhaustiva ni MC/DC.
 
-Al repetir la ejecución, consultar `unit.log`, `integration.log`, `unit_coverage.html` e `integration_coverage.html` dentro de la nueva carpeta `results/<fecha_hora>/`. Estos archivos se generan al ejecutar el runner y se abren localmente; no se publican en Git.
+Al repetir la ejecución, consultar `unit.log`, `integration.log`, `unit_coverage.html` e `integration_coverage.html` directamente en `results/`. Estos archivos se generan al ejecutar el runner y se abren localmente; no se publican en Git.
 
 Los HTML son resúmenes sin código fuente; los JSON registran nombres, números de línea y contadores. La suite pública requiere acceso al firmware para compilar. Los resultados no certifican radio real, SPI, FreeRTOS, sensores, distancia, consumo ni estabilidad prolongada.
 
@@ -107,7 +112,7 @@ La suite conserva los nueve casos CFT y siete complementarios agrupados por comp
 
 ## Verificación del ajuste STT — 10 de octubre de 2026
 
-Se ejecutó la suite completa con `./scripts/run.ps1 -RunId 2026-10-10_stt_verificado`. Resultado: 16 unitarios y una integración PASS, sin fallos ni casos ignorados; análisis estático y regresión host PASS. IS-01 incluye las nuevas comprobaciones intermedias S0 y T1–T5 y la igualdad de campos en ambos ciclos pack/unpack.
+Se ejecutó la suite completa con `./scripts/run.ps1`. Resultado: 16 unitarios y una integración PASS, sin fallos ni casos ignorados; análisis estático y regresión host PASS. IS-01 incluye las nuevas comprobaciones intermedias S0 y T1–T5 y la igualdad de campos en ambos ciclos pack/unpack.
 
 La evidencia vigente está en `results/2026-10-10_stt_verificado/`. Cobertura unitaria de network_layer.c: 144/160 líneas (90 %), 101/122 ramas (82,8 %) y 13/15 funciones (86,7 %). La integración mantiene su reporte independiente: 165/251 líneas (65,7 %), 69/168 ramas (41,1 %) y 17/21 funciones (81 %), sobre network_layer.c y mesh_frame.c.
 
